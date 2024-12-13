@@ -11,12 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('utilizadors', function (Blueprint $table) {
-            
-            $table->id();
-            $table->integer('user_id');
-            $table->timestamps();
-        });
+        //Schema::dropIfExists('utilizadors');
     }
 
     /**
@@ -24,6 +19,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('utilizadors');
+        //
     }
 };
