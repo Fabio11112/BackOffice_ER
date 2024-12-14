@@ -8,4 +8,11 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    server: {
+        host: true, // Allows access via network IP
+        port: 5173, // Optional: change the port if needed
+        hmr: {
+            host: 'localhost', // Replace with your IP for external access
+        },
+    },
 });
