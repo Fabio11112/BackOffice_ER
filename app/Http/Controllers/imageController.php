@@ -10,8 +10,8 @@ class imageController extends Controller
     public function uploadImages(Request $request){
         try
         {
-            foreach($request as $image){
-                $validated =  $image->validate([
+            foreach($request->all() as $imageData){
+                $validated =  $imageData->validate([
                     'image' => 'required',
                     'mime' => 'required|string',
                     'utilizador_id' => 'required|integer'
@@ -20,11 +20,11 @@ class imageController extends Controller
                 Image::create($validated);
             }
 
-            return response()->json(['message' => 'Image uploaded successfully']);
+            return response()->json(['message' => 'Image uploaded successfully', 'status' => 200]);
         }
         catch(\Exception $e)
         {
-            return response()->json(['message' => 'Error uploading image'], 500);
+            return response()->json(['message' => 'Error uploading image:' + $e], 500);
         }
     }
 }
