@@ -10,6 +10,7 @@ class imageController extends Controller
     public function uploadImages(Request $request){
         try
         {
+            //print($request);
             foreach($request->all() as $imageData){
                 $validated =  $imageData->validate([
                     'image' => 'required',
