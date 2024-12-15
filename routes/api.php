@@ -11,3 +11,5 @@ Route::get('/user', function (Request $request) {
 
 
 Route::post('/uploadImage', [imageController::class, 'uploadImages'])->name('image.upload');
+
+Route::get('/image/{id}', [imageController::class, 'getImage'])->name('image.get');

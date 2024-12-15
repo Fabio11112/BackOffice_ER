@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Image;
 use Illuminate\Support\Facades\Log;
 
+use \Illuminate\Http\UploadedFile;
+
 class imageController extends Controller 
 {
     public function uploadImages(Request $request)
@@ -17,21 +19,32 @@ class imageController extends Controller
 
             Log::info("Array do Request uploadImage:\n");
             Log::info($request);
+            Log::info("\n\n");
+            
+            Log::info($request['mime']);
+            Log::info($request['user_id']);
 
-            // $request->validate([
-            //     'images' => 'required|array',
-            //     'image.*.image' => 'required|string',
-            //     'image.*.mime' => 'required|string',
-            //     'image.*.user_id' => 'required|integer'
-            // ]);
+            Log::info("Array do Request uploadImage->images:\n");
 
-            foreach ($request->input('images') as $imageData) {
+            $request->validate([
+                'image' => 'required|array',
+                'mime' => 'required|string',
+                'user_id' => 'required|integer'
+            ]);
+
+            Log::info("Request validado\n");
+            
+
+            foreach ($request->file('image') as $file) {
+                Log::info("Image data:\n");
                 Image::create([
-                    'image' => $imageData['image'], 
-                    'mime' => $imageData['mime'], 
-                    'utilizador_id' => $imageData['user_id'] 
+                    'file' => $file->get(), 
+                    'mime' => $request['mime'], 
+                    'utilizador_id' => $request['user_id']
                 ]);
             }
+            Log::info("Images criadas\n");
+            
 
             return response()->json([
                 'message' => 'Images uploaded successfully',
@@ -41,6 +54,28 @@ class imageController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error uploading images: ' . $e->getMessage(),
+                Log::info("Error uploading images: " . $e->getMessage()),
+                'status' => 500
+            ], 500);
+        }
+    }
+
+    public function getImage($id)
+    {
+        try {
+            $image = Image::find($id);
+
+            if ($image) {
+                return response($image->file)->header('Content-Type', $image->mime);
+            } else {
+                return response()->json([
+                    'message' => 'Image not found',
+                    'status' => 404
+                ], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error getting image: ' . $e->getMessage(),
                 'status' => 500
             ], 500);
         }
