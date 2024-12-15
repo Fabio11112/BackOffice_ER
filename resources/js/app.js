@@ -72,13 +72,13 @@ document.getElementById('updateForm').addEventListener('submit', async function 
                                  `Grupo: ${item.group_size || 'N/A'}, ` +
                                  `Bebês: ${item.calves || 'N/A'}, ` +
                                  `Data: ${item.date || 'N/A'}, `
-                const fotoLink = document.createElement('a');
-                fotoLink.textContent = 'Ver Foto';
-                fotoLink.href = `/analisaFoto/${item.creature?.id}`;
-                fotoLink.target = '_blank'; 
-                fotoLink.style.marginLeft = '10px'; 
-                li.appendChild(fotoLink);
-                resultadosElement.appendChild(li);
+                        const fotoLink = document.createElement('a');
+                        fotoLink.textContent = 'Ver Foto';
+                        fotoLink.href = `/analisaFoto/${item.creature?.id}`;
+                        fotoLink.target = '_blank'; 
+                        fotoLink.style.marginLeft = '10px'; 
+                        li.appendChild(fotoLink);
+                        resultadosElement.appendChild(li);
             }
         } else {
             resultadosElement.innerHTML = '<li>Nenhum resultado encontrado.</li>';

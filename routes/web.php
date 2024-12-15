@@ -16,9 +16,5 @@ Route::post('/updateForm', [CreatureController::class, 'updateForm'])->name('for
 
 Route::get('/analisaFoto/{id}', [FotoController::class, 'analisaFoto'])->name('analisaFoto');
 
-Route::get('/analisaFoto', function () {
-    return view('analisa-foto');
-    
-});
 
 

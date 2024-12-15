@@ -9,18 +9,38 @@ class FotoController extends Controller
 {
     public function analisaFoto($id)
     {
-        LOG::info('ENTROU NO METODO ANALISAFOTO');
-        $response = Http::get('https://wave-labs.org/api/creature');
-        
+        Log::info("Entered analisaFoto method with ID: {$id}");
+        $creatureContent = null;
 
-        $creaturesSubEspecies = $response->successful() ? $response->json() : [];
+        try {
+            $response = Http::get("https://wave-labs.org/api/creature", ['id' => $id]);
 
-        $creature = collect($creaturesSubEspecies)->firstWhere('id', $id);
+            if ($response->successful()) {
+                $responseData = $response->json();
 
-        if (!$creature) {
-            return redirect()->back()->with('error', 'Criatura não encontrada.');
+                // Verifica se há dados e busca o conteúdo correspondente ao `id`
+                if (isset($responseData['data']) && is_array($responseData['data'])) {
+                    $creature = collect($responseData['data'])->firstWhere('id', $id);
+                    if ($creature) {
+                        $creatureContent = $creature;
+                        Log::info('Creature content retrieved successfully', ['creature' => $creatureContent]);
+                    } else {
+                        Log::warning('Creature not found for the given ID', ['id' => $id, 'response' => $responseData]);
+                    }
+                } else {
+                    Log::warning('Unexpected API response structure', ['response' => $responseData]);
+                }
+            } else {
+                Log::error('API request failed', [
+                    'status' => $response->status(),
+                    'response' => $response->json() ?? 'No details',
+                ]);
+            }
+        } catch (\Exception $e) {
+            Log::error('API request threw an exception', ['message' => $e->getMessage()]);
         }
 
-        return view('analisa-foto', ['creature' => $creature]);
+        return view('analisa-foto', ['creatureContent' => $creatureContent]);
     }
+
 }
