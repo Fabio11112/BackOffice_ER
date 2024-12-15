@@ -170,7 +170,7 @@
 </form>
         <div class="results mt-8">
             <h2 class="text-xl font-semibold">Resultados</h2>
-            <ul id="resultados">
+            <ul id="resultados" class="mt-4 bg-white p-4 shadow rounded-md">
                 <li>Nenhum resultado encontrado.</li>
             </ul>
         </div>

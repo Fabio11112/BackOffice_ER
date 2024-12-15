@@ -67,6 +67,7 @@ document.getElementById('updateForm').addEventListener('submit', async function 
         if (filtrados.length > 0) {
             for (const item of filtrados) {
                 const li = document.createElement('li');
+                li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start');
                 li.textContent = `${item.creature?.name || 'N/A'} ` +
                                  `Vento: ${item.beaufort_scale?.desc?.pt || 'N/A'}, ` +
                                  `Grupo: ${item.group_size || 'N/A'}, ` +
@@ -76,7 +77,11 @@ document.getElementById('updateForm').addEventListener('submit', async function 
                         fotoLink.textContent = 'Ver Foto';
                         fotoLink.href = `/analisaFoto/${item.creature?.id}`;
                         fotoLink.target = '_blank'; 
-                        fotoLink.style.marginLeft = '10px'; 
+                        fotoLink.classList.add('btn', 'btn-primary', 'btn-sm');
+                        fotoLink.style.marginLeft = '90%';
+                        fotoLink.style.marginTop = '20%';
+
+
                         li.appendChild(fotoLink);
                         resultadosElement.appendChild(li);
             }
