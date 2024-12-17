@@ -9,38 +9,42 @@ class FotoController extends Controller
 {
     public function analisaFoto($id)
     {
-        Log::info("Entered analisaFoto method with ID: {$id}");
+        $urlBase = "https://wave-labs.org/api/creature";
         $creatureContent = null;
 
-        try {
-            $response = Http::get("https://wave-labs.org/api/creature", ['id' => $id]);
+        // Itera pelas páginas de 1 a 7
+        for ($page = 1; $page <= 7; $page++) {
+            try {
+                $response = Http::get($urlBase, ['page' => $page]);
 
-            if ($response->successful()) {
-                $responseData = $response->json();
+                // Verifica se a resposta foi bem-sucedida
+                if ($response->successful()) {
+                    $responseData = $response->json();
 
-                // Verifica se há dados e busca o conteúdo correspondente ao `id`
-                if (isset($responseData['data']) && is_array($responseData['data'])) {
-                    $creature = collect($responseData['data'])->firstWhere('id', $id);
-                    if ($creature) {
-                        $creatureContent = $creature;
-                        Log::info('Creature content retrieved successfully', ['creature' => $creatureContent]);
+                    // Verifica se há dados e busca o conteúdo pelo ID
+                    if (isset($responseData['data']) && is_array($responseData['data'])) {
+                        $creature = collect($responseData['data'])->firstWhere('id', $id);
+                        
+                        if ($creature) {
+                            $creatureContent = $creature;
+                            Log::info('Creature content retrieved successfully', ['creature' => $creatureContent]);
+                            break; // Encerra o loop ao encontrar o dado
+                        }
                     } else {
-                        Log::warning('Creature not found for the given ID', ['id' => $id, 'response' => $responseData]);
+                        Log::warning('Unexpected API response structure', ['response' => $responseData]);
                     }
                 } else {
-                    Log::warning('Unexpected API response structure', ['response' => $responseData]);
+                    Log::error('API request failed', [
+                        'status' => $response->status(),
+                        'response' => $response->json() ?? 'No details',
+                    ]);
                 }
-            } else {
-                Log::error('API request failed', [
-                    'status' => $response->status(),
-                    'response' => $response->json() ?? 'No details',
-                ]);
+            } catch (\Exception $e) {
+                Log::error('API request threw an exception', ['message' => $e->getMessage()]);
             }
-        } catch (\Exception $e) {
-            Log::error('API request threw an exception', ['message' => $e->getMessage()]);
         }
 
+        // Retorna a view com o conteúdo encontrado ou null
         return view('analisa-foto', ['creatureContent' => $creatureContent]);
     }
-
 }
