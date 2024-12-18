@@ -4,28 +4,38 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Image; // Model vinculada à tabela `images`
+use Illuminate\Support\Facades\Log;
 
 class imageController extends Controller 
 {
     public function uploadImages(Request $request)
     {
 
+        Log::info($request);
+        
         try {
 
-            $request->validate([
-                'image' => 'required|array',
-                'image.*.image' => 'required',
-                'image.*.mime' => 'required|string', 
-                'image.*.user_id' => 'required|integer'
+            $imageData = $request->validate([
+                'metadado_id' => 'nullable|integer',
+                'utilizador_id' => 'integer|required',
+                'mime' => 'string',
+                'name' => 'string',
+                'image' => 'required'
             ]);
 
-            foreach ($request->input('image') as $imageData) {
-                Image::create([
-                    'image' => $imageData['image'], 
-                    'mime' => $imageData['mime'], 
-                    'utilizador_id' => $imageData['user_id'] 
-                ]);
-            }
+            $image=$imageData['image'];
+            $metadado_id=$imageData['metadado_id'];
+            $utilizador_id=$imageData['utilizador_id'];
+            $mime=$imageData['mime'];
+            $name = $imageData['name'];
+            Image::create([
+                'name' => $name,
+                'file' =>  $image, 
+                'mime' => $mime, 
+                'utilizador_id' =>  $utilizador_id ,
+                'metadado_id' => $metadado_id
+            ]);
+            
 
             return response()->json([
                 'message' => 'Images uploaded successfully',

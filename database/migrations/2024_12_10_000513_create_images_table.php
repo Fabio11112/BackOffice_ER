@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('images', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name')->nullable();
             $table->text('mime');
-            $table->foreignId('utilizador_id')->constrained('utilizadors');
+            $table->foreignId('utilizador_id')->constrained('utilizadors', 'user_id');
+            $table->foreignId("metadado_id")->constrained('metadados')->nullable();
             $table->timestamps();
         });
 
