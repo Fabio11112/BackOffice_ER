@@ -16,5 +16,6 @@ Route::post('/updateForm', [CreatureController::class, 'updateForm'])->name('for
 
 Route::get('/analisaFoto/{id}', [FotoController::class, 'analisaFoto'])->name('analisaFoto');
 
+Route::post('/aprovado', [FotoController::class, 'aprovado'])->name('aprovado');
 
 

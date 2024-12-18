@@ -48,7 +48,8 @@ class imageController extends Controller
                     'file' =>  $image, 
                     'mime' => $mime, 
                     'utilizador_id' =>  $utilizador_id ,
-                    'metadado_id' => $metadado_id
+                    'metadado_id' => $metadado_id,
+                    'aprovado' => null
                 ]);
                 
             }else{
@@ -56,7 +57,9 @@ class imageController extends Controller
                     'name' => $name,
                     'file' =>  $image, 
                     'mime' => $mime, 
-                    'utilizador_id' =>  $utilizador_id
+                    'utilizador_id' =>  $utilizador_id,
+                    'aprovado' => null
+
                 ]);
             }
 

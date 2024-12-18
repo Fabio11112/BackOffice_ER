@@ -47,4 +47,13 @@ class FotoController extends Controller
         // Retorna a view com o conteúdo encontrado ou null
         return view('analisa-foto', ['creatureContent' => $creatureContent]);
     }
+    public function aprovado(Request $request)
+    {
+       console.log($request);
+       if($request){
+
+
+       }else{
+       }1
+    }
 }
