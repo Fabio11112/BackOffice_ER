@@ -1,50 +1,95 @@
-import './bootstrap';
-console.log('App JS is working');
-window.filtrarResultados = function()  {
-    const especie = document.getElementById('especie').value;
-    const subespecie = document.getElementById('subespecie').value;
-    const vento = document.getElementById('vento').value;
-    const numeroEspecies = document.getElementById('numero-especies').value;
-    const bebes = document.getElementById('bebes').value;
-    const dataHora = document.getElementById('data-hora').value;
-    const empresaBarco = document.getElementById('empresa-barco').value;
-    const comportamento = document.getElementById('comportamento').value;
-    const dataInicio = document.getElementById("data-inicio").value;
-    const horaInicio = document.getElementById("hora-inicio").value;
-    const horaFim = document.getElementById("hora-fim").value;
+document.getElementById('updateForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
 
-    const resultados = [
-        { especie: especie, subespecie:subespecie, vento: vento, numeroEspecies: numeroEspecies, bebes: bebes, dataHora: dataHora, empresaBarco: empresaBarco, comportamento: comportamento, dataInicio: dataInicio, horaInicio: horaInicio, }
-    ];
-    console.log(resultados);
-    const filtrados = resultados.filter(item => {
-        return (
-            (!especie || item.especie.toLowerCase() === especie.toLowerCase()) &&
-            (!subespecie || item.subespecie.toLowerCase() === subespecie.toLowerCase()) &&
-            (!numeroEspecies || item.numeroEspecies.toLowerCase() === numeroEspecies.toLowerCase()) &&
-            (!numeroEspecies || item.numeroEspecies.toLowerCase() === numeroEspecies.toLowerCase()) &&
-            (!bebes || item.bebes.toLowerCase() === bebes.toLowerCase()) &&
-            (!dataHora || item.dataHora.toLowerCase() === dataHora.toLowerCase()) &&
-            (!empresaBarco || item.empresaBarco.toLowerCase() === empresaBarco.toLowerCase()) &&
-            (!comportamento || item.comportamento.toLowerCase() === comportamento.toLowerCase()) &&
-            (!vento || item.vento.toLowerCase().includes(vento.toLowerCase())) &&
-            (!dataInicio || item.dataHora >= dataInicio) &&
-            (!horaInicio || item.dataHora >= horaInicio) &&
-            (!horaFim || item.dataHora <= horaFim)
-        );
-    });
+    const especie = document.getElementById('especie').value.trim();
+    const subespecie = document.getElementById('subespecie').value.trim();
+    const vento = document.getElementById('vento').value.trim();
+    const numeroEspecies = document.getElementById('numero-especies').value.trim();
+    const bebes = document.getElementById('bebes').value.trim();
+    const empresaBarco = document.getElementById('empresa-barco').value.trim();
+    const comportamento = document.getElementById('comportamento').value.trim();
+    const dataInicio = document.getElementById('data-inicio').value;
+    const horaInicio = document.getElementById('hora-inicio').value;
+    const horaFim = document.getElementById('hora-fim').value;
 
-    const resultadosElement = document.getElementById('resultados');
-    resultadosElement.innerHTML = '';
+    console.log('dataInicio :', dataInicio, 'horaInicio:', horaInicio, 'horaFim:', horaFim);
 
-    if (filtrados.length > 0) {
-        filtrados.forEach(item => {
-            
-            const li = document.createElement('li');
-            li.textContent = `${item.especie} (${item.subespecie}) - ${item.data} - ${item.empresaBarco}`;
-            resultadosElement.appendChild(li);
+    try {
+        let sightingData = [];
+        let nextUrl = 'https://wave-labs.org/api/sighting';
+
+        while (nextUrl) {
+            const response = await fetch(nextUrl);
+            if (!response.ok) {
+                throw new Error(`Erro ao buscar os dados de sighting: ${response.statusText}`);
+            }
+
+            const pageData = await response.json();
+            sightingData = sightingData.concat(pageData.data);
+            nextUrl = pageData.links?.next || null;
+        }
+
+        console.log('Todos os Dados de Sighting:', sightingData);
+
+        function horaParaMinutos(hora) {
+            const [h, m, s] = hora.split(':').map(Number);
+            return h * 60 + m + (s ? s / 60 : 0); 
+        }
+
+        const filtrados = sightingData.filter(item => {
+            const [dateRegistada, timeRegistado] = item.date.split(' '); // Divide a string em duas partes: data e hora
+
+            console.log('Data:', dateRegistada, 'Hora:', timeRegistado);
+
+            const minutosRegistados = horaParaMinutos(timeRegistado);
+            const minutosInicio = horaInicio ? horaParaMinutos(horaInicio) : null;
+            const minutosFim = horaFim ? horaParaMinutos(horaFim) : null;
+
+            return (
+                (subespecie === '0' || subespecie === '' || (item.creature?.name?.toString() === subespecie)) &&
+                (vento === '0' || vento === '' || item.beaufort_scale?.desc?.pt === vento) &&
+                (numeroEspecies === '0' || numeroEspecies === '' || item.group_size?.toString() === numeroEspecies) &&
+                (bebes === '0' || bebes === '' || item.calves?.toString() === bebes) &&
+                (empresaBarco === '0' || empresaBarco === '' || item.vehicle?.vehicle?.pt?.toString() === empresaBarco) &&
+                (comportamento === '0' || comportamento === '' || item.behaviour?.behaviour?.pt.toString() === comportamento) &&
+                (dataInicio === '' || dateRegistada === dataInicio) &&
+                (minutosInicio === null || minutosRegistados >= minutosInicio) &&
+                (minutosFim === null || minutosRegistados <= minutosFim)
+            );
         });
-    } else {
-        resultadosElement.innerHTML = '<li>Nenhum resultado encontrado.</li>';
+
+        console.log('Filtrados:', filtrados);
+
+
+        const resultadosElement = document.getElementById('resultados');
+        resultadosElement.innerHTML = '';
+
+        if (filtrados.length > 0) {
+            for (const item of filtrados) {
+                const li = document.createElement('li');
+                li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start');
+                li.textContent = `${item.creature?.name || 'N/A'} ` +
+                                 `Vento: ${item.beaufort_scale?.desc?.pt || 'N/A'}, ` +
+                                 `Grupo: ${item.group_size || 'N/A'}, ` +
+                                 `Bebês: ${item.calves || 'N/A'}, ` +
+                                 `Data: ${item.date || 'N/A'}, `
+                        const fotoLink = document.createElement('a');
+                        fotoLink.textContent = 'Ver Foto';
+                        fotoLink.href = `/analisaFoto/${item.creature?.id}`;
+                        fotoLink.target = '_blank'; 
+                        fotoLink.classList.add('btn', 'btn-primary', 'btn-sm');
+                        fotoLink.style.marginLeft = '90%';
+                        fotoLink.style.marginTop = '20%';
+
+
+                        li.appendChild(fotoLink);
+                        resultadosElement.appendChild(li);
+            }
+        } else {
+            resultadosElement.innerHTML = '<li>Nenhum resultado encontrado.</li>';
+        }
+    } catch (error) {
+        console.error('Erro durante o pedido ou processamento:', error);
+        alert(`Erro: ${error.message}`);
     }
-}
+});

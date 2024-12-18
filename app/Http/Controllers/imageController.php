@@ -4,15 +4,21 @@ namespace App\Http\Controllers;
 
 
 use Illuminate\Http\Request;
+<<<<<<< HEAD
 use App\Models\Image;
 use Illuminate\Support\Facades\Log;
 
 use \Illuminate\Http\UploadedFile;
+=======
+use App\Models\Image; // Model vinculada à tabela `images`
+use Illuminate\Support\Facades\Log;
+>>>>>>> novo_novo_final_backoffice
 
 class imageController extends Controller 
 {
     public function uploadImages(Request $request)
     {
+<<<<<<< HEAD
         try {
 
            // $data = $request->json->all();
@@ -41,6 +47,55 @@ class imageController extends Controller
                     'file' => $file->get(), 
                     'mime' => $request['mime'], 
                     'utilizador_id' => $request['user_id']
+=======
+
+        Log::info($request);
+        
+        try {
+            //$imageBlob = $request->file('image');
+            $hasMetadado = $request->has('metadado_id');
+            if($hasMetadado){
+                $imageData = $request->validate([
+                    'metadado_id' => 'nullable|integer',
+                    'utilizador_id' => 'integer|required',
+                    'mime' => 'string',
+                    'name' => 'string',
+                    'image' => 'required'
+                ]);
+            }else{
+                $imageData = $request->validate([
+                    'utilizador_id' => 'integer|required',
+                    'mime' => 'string',
+                    'name' => 'string',
+                    'image' => 'required'
+                ]);
+            }
+            $metadado_id = null;
+            $image=$imageData['image']->getContent();
+
+            if($hasMetadado){
+                $metadado_id=$imageData['metadado_id'];
+            }
+            $utilizador_id=$imageData['utilizador_id'];
+            $mime=$imageData['mime'];
+            $name = $imageData['name'];
+
+            if($hasMetadado){
+                Image::create([
+                    'name' => $name,
+                    'file' =>  $image, 
+                    'mime' => $mime, 
+                    'utilizador_id' =>  $utilizador_id ,
+                    'metadado_id' => $metadado_id
+                ]);
+                
+            }else{
+                Image::create([
+                    'name' => $name,
+                    'file' =>  $image, 
+                    'mime' => $mime, 
+                    'utilizador_id' =>  $utilizador_id
+>>>>>>> novo_novo_final_backoffice
                 ]);
             }
             Log::info("Images criadas\n");
@@ -52,9 +107,15 @@ class imageController extends Controller
             ], 200);
 
         } catch (\Exception $e) {
+<<<<<<< HEAD
             return response()->json([
                 'message' => 'Error uploading images: ' . $e->getMessage(),
                 Log::info("Error uploading images: " . $e->getMessage()),
+=======
+            Log::info($e->getMessage());
+            return response()->json([
+                'message' => 'Error uploading images: ' . $e->getMessage(),
+>>>>>>> novo_novo_final_backoffice
                 'status' => 500
             ], 500);
         }
@@ -64,7 +125,10 @@ class imageController extends Controller
     {
         try {
             $image = Image::find($id);
+<<<<<<< HEAD
 
+=======
+>>>>>>> novo_novo_final_backoffice
             if ($image) {
                 return response($image->file)->header('Content-Type', $image->mime);
             } else {
@@ -80,6 +144,7 @@ class imageController extends Controller
             ], 500);
         }
     }
+<<<<<<< HEAD
 
     // public function uploadImages(Request $request){
     //     try
@@ -103,3 +168,6 @@ class imageController extends Controller
     //     }
     // }
 }
+=======
+}
+>>>>>>> novo_novo_final_backoffice
