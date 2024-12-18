@@ -9,3 +9,5 @@ use App\Models\Utilizador;
 
 
 Route::post('/uploadImage', [imageController::class, 'uploadImages'])->name('image.upload');
+
+Route::get('/getImage/{$id}', [imageController::class, 'getImage'])->name('image.getImages');

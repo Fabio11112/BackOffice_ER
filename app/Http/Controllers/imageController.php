@@ -73,4 +73,24 @@ class imageController extends Controller
             ], 500);
         }
     }
+
+    public function getImage($id)
+    {
+        try {
+            $image = Image::find($id);
+            if ($image) {
+                return response($image->file)->header('Content-Type', $image->mime);
+            } else {
+                return response()->json([
+                    'message' => 'Image not found',
+                    'status' => 404
+                ], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error getting image: ' . $e->getMessage(),
+                'status' => 500
+            ], 500);
+        }
+    }
 }
