@@ -7,6 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Image extends Model
 {
-    /** @use HasFactory<\Database\Factories\ImageFactory> */
+    protected $fillable = [
+        'name',
+        'metadado_id',
+        'file',
+        'utilizador_id',
+        'mime',
+    ];
     use HasFactory;
 }

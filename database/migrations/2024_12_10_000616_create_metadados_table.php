@@ -13,14 +13,15 @@ return new class extends Migration
     {
         Schema::create('metadados', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('utilizador_id')->constrained('utilizadors');
-            $table->integer('qnt_avistamentos');
-            $table->integer('num_crias');
-            $table->decimal('latitude', 11, 8); 
-            $table->decimal('longitude', 11, 8); 
-            $table->dateTime('data_hora_avistamento');
-            $table->string('empresa_barcos');
-            $table->text('comportamento_especies');
+            $table->foreignId('utilizador_id')->constrained('utilizadors', 'user_id');
+            $table->integer('qnt_avistamentos')->nullable(); 
+            $table->integer('num_crias')->nullable(); 
+            $table->decimal('latitude', 11, 8)->nullable(); 
+            $table->decimal('longitude', 11, 8)->nullable(); 
+            $table->string('data_hora_avistamento');
+            $table->string('empresa_barcos')->nullable(); 
+            $table->string('comportamento_especies')->nullable(); 
+            $table->integer('beaufourt_scale')->nullable(); 
             $table->timestamps();
         });
     }
@@ -30,6 +31,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('images');
         Schema::dropIfExists('metadados');
     }
 };
