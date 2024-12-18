@@ -24,16 +24,16 @@
                         <select id="especie" name="especie" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                             <option value="0">Selecione uma espécie</option>
                             @if (!empty($creaturesType['data']))
-                            @foreach ($creaturesType['data'] as $creature)
-                            <option value="{{ $creature['taxa_category'] }}">{{ $creature['taxa_category'] }}</option>
+                                @foreach ($creaturesType['data'] as $creature)
+                                    <option value="{{ $creature['taxa_category'] }}">{{ $creature['taxa_category'] }}</option>
 
-                            @endforeach
+                                @endforeach
                             @else
-                            <option value="">Nenhuma espécie encontrada</option>
+                                <option value="">Nenhuma espécie encontrada</option>
                             @endif
                         </select>
                         @php
-                        $creatures_subespecies = [];
+                            $creatures_subespecies = [];
                         @endphp
 
                     </div>
@@ -42,18 +42,18 @@
                         <select id="subespecie" name="subespecie" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                             <option value="0">Selecione</option>
                             @if (!empty($allSightings['data']))
-                            @foreach ($allSightings['data'] as $meta)
-                            @if (!in_array($meta['creature']['name'], $creatures_subespecies))
-                            <option value="{{ $meta['creature']['name']}}">
-                                {{ $meta['creature']['name'] }}
-                            </option>
-                            @php
-                            $creatures_subespecies[] = $meta['creature']['name'];
-                            @endphp
-                            @endif
-                            @endforeach
+                                @foreach ($allSightings['data'] as $meta)
+                                    @if (!in_array($meta['creature']['name'], $creatures_subespecies))
+                                        <option value="{{ $meta['creature']['name']}}">
+                                            {{ $meta['creature']['name'] }}
+                                        </option>
+                                        @php
+                                            $creatures_subespecies[] = $meta['creature']['name'];
+                                        @endphp
+                                    @endif
+                                @endforeach
                             @else
-                            <option value="">Nenhuma especie encontrada</option>
+                                <option value="">Nenhuma especie encontrada</option>
                             @endif
                         </select>
 
@@ -66,18 +66,18 @@
                         <select id="vento" name="vento" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                             <option value="0">Selecione</option>
                             @if (!empty($allSightings['data']))
-                            @foreach ($allSightings['data'] as $meta)
-                            @if (!in_array($meta['beaufort_scale']['id'], $beaufort_scale))
-                            <option value="{{ $meta['beaufort_scale']['desc']['pt']}}">
-                                {{ $meta['beaufort_scale']['desc']['pt'] }}
-                            </option>
-                            @php
-                            $beaufort_scale[] = $meta['beaufort_scale']['id'];
-                            @endphp
-                            @endif
-                            @endforeach
+                                @foreach ($allSightings['data'] as $meta)
+                                    @if (!in_array($meta['beaufort_scale']['id'], $beaufort_scale))
+                                        <option value="{{ $meta['beaufort_scale']['desc']['pt']}}">
+                                            {{ $meta['beaufort_scale']['desc']['pt'] }}
+                                        </option>
+                                        @php
+                                            $beaufort_scale[] = $meta['beaufort_scale']['id'];
+                                        @endphp
+                                    @endif
+                                @endforeach
                             @else
-                            <option value="">Nenhuma escala encontrada</option>
+                                <option value="">Nenhuma escala encontrada</option>
                             @endif
                         </select>
 
@@ -101,29 +101,29 @@
                         </label>
                         <select id="empresa-barco" name="empresa-barco" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                             <option value="0">Selecione</option>
-                            @if (!empty($allSightings['data']))
-                            @foreach ($allSightings['data'] as $meta)
-                            @php
-                            $currentBarco = $meta['vehicle']['vehicle'] ?? null; // Garantir que a chave exista
-                            @endphp
-                            @if ($currentBarco && !in_array($currentBarco['pt'], $barcos))
-                            <option value="{{ $currentBarco['pt'] }}">
-                                {{ $currentBarco['pt'] }}
-                            </option>
-                            @php
-                            $barcos[] = $currentBarco['pt']; // Adicionar ao array de rastreamento
-                            @endphp
-                            @endif
-                            @endforeach
-                            @else
-                            <option value="">Nenhum veículo encontrado</option>
-                            @endif
+                                @if (!empty($allSightings['data']))
+                                    @foreach ($allSightings['data'] as $meta)
+                                        @php
+                                            $currentBarco = $meta['vehicle']['vehicle'] ?? null; // Garantir que a chave exista
+                                        @endphp
+                                        @if ($currentBarco && !in_array($currentBarco['pt'], $barcos))
+                                            <option value="{{ $currentBarco['pt'] }}">
+                                                {{ $currentBarco['pt'] }}
+                                            </option>
+                                            @php
+                                                $barcos[] = $currentBarco['pt']; // Adicionar ao array de rastreamento
+                                            @endphp
+                                        @endif
+                                     @endforeach
+                                @else
+                                    <option value="">Nenhum veículo encontrado</option>
+                                @endif
                         </select>
                     </div>
 
 
                     @php
-                    $behaviours = []; // Array para rastrear comportamentos únicos
+                        $behaviours = []; // Array para rastrear comportamentos únicos
                     @endphp
 
                     <div class="list-group-item">
@@ -133,21 +133,21 @@
                         <select id="comportamento" name="comportamento" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                             <option value="0">Selecione</option>
                             @if (!empty($allSightings['data']))
-                            @foreach ($allSightings['data'] as $meta)
-                            @php
-                            $currentBehaviour = $meta['behaviour']['behaviour'] ?? null;
-                            @endphp
-                            @if ($currentBehaviour && !in_array($currentBehaviour['pt'], $behaviours))
-                            <option value=" {{ $currentBehaviour['pt'] }}">
-                                {{ $currentBehaviour['pt'] }}
-                            </option>
-                            @php
-                            $behaviours[] = $currentBehaviour['pt']; // Adicionar ao array de rastreamento
-                            @endphp
-                            @endif
-                            @endforeach
+                                @foreach ($allSightings['data'] as $meta)
+                                    @php
+                                    $currentBehaviour = $meta['behaviour']['behaviour'] ?? null;
+                                    @endphp
+                                    @if ($currentBehaviour && !in_array($currentBehaviour['pt'], $behaviours))
+                                        <option value=" {{ $currentBehaviour['pt'] }}">
+                                        {{ $currentBehaviour['pt'] }}
+                                        </option>
+                                        @php
+                                            $behaviours[] = $currentBehaviour['pt']; // Adicionar ao array de rastreamento
+                                        @endphp
+                                    @endif
+                                @endforeach
                             @else
-                            <option value="">Nenhum comportamento encontrado</option>
+                                <option value="">Nenhum comportamento encontrado</option>
                             @endif
                         </select>
                     </div>

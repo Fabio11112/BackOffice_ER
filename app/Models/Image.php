@@ -13,6 +13,7 @@ class Image extends Model
         'file',
         'utilizador_id',
         'mime',
+        'aprovado'
     ];
     use HasFactory;
 }
