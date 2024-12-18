@@ -14,28 +14,51 @@ class imageController extends Controller
         Log::info($request);
         
         try {
+            //$imageBlob = $request->file('image');
+            $hasMetadado = $request->has('metadado_id');
+            if($hasMetadado){
+                $imageData = $request->validate([
+                    'metadado_id' => 'nullable|integer',
+                    'utilizador_id' => 'integer|required',
+                    'mime' => 'string',
+                    'name' => 'string',
+                    'image' => 'required'
+                ]);
+            }else{
+                $imageData = $request->validate([
+                    'utilizador_id' => 'integer|required',
+                    'mime' => 'string',
+                    'name' => 'string',
+                    'image' => 'required'
+                ]);
+            }
+            $metadado_id = null;
+            $image=$imageData['image']->getContent();
 
-            $imageData = $request->validate([
-                'metadado_id' => 'nullable|integer',
-                'utilizador_id' => 'integer|required',
-                'mime' => 'string',
-                'name' => 'string',
-                'image' => 'required'
-            ]);
-
-            $image=$imageData['image'];
-            $metadado_id=$imageData['metadado_id'];
+            if($hasMetadado){
+                $metadado_id=$imageData['metadado_id'];
+            }
             $utilizador_id=$imageData['utilizador_id'];
             $mime=$imageData['mime'];
             $name = $imageData['name'];
-            Image::create([
-                'name' => $name,
-                'file' =>  $image, 
-                'mime' => $mime, 
-                'utilizador_id' =>  $utilizador_id ,
-                'metadado_id' => $metadado_id
-            ]);
-            
+
+            if($hasMetadado){
+                Image::create([
+                    'name' => $name,
+                    'file' =>  $image, 
+                    'mime' => $mime, 
+                    'utilizador_id' =>  $utilizador_id ,
+                    'metadado_id' => $metadado_id
+                ]);
+                
+            }else{
+                Image::create([
+                    'name' => $name,
+                    'file' =>  $image, 
+                    'mime' => $mime, 
+                    'utilizador_id' =>  $utilizador_id
+                ]);
+            }
 
             return response()->json([
                 'message' => 'Images uploaded successfully',
@@ -43,6 +66,7 @@ class imageController extends Controller
             ], 200);
 
         } catch (\Exception $e) {
+            Log::info($e->getMessage());
             return response()->json([
                 'message' => 'Error uploading images: ' . $e->getMessage(),
                 'status' => 500

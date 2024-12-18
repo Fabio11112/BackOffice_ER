@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->text('mime');
             $table->foreignId('utilizador_id')->constrained('utilizadors', 'user_id');
-            $table->foreignId("metadado_id")->constrained('metadados')->nullable();
+            $table->foreignId("metadado_id")->nullable()->constrained('metadados');
             $table->timestamps();
         });
 
